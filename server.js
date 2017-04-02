@@ -13,20 +13,12 @@ app.get('/', function(req, res,next) {
 
 io.on('connection', function(client) {  
 	console.log('client connected');
-	//when a new client connects
-	io.clients(function(error, clients){
-	  if (error) throw error;
-		//send the list of clients out to all the clients
-		io.emit('clientList', clients);
-		console.log(clients);
-	});
+    client.on('chat message', function(msg){
+        io.emit('chat message', msg)
+    })
 	
-	//when the server receives clientClicked message, do this
-	client.on('clientClicked', function(id) {
-		//send a message to just the client whose button was clicked
-		io.to(id).emit('youWereClicked');
-	});
 });
+
 
 //start our web server and socket.io server listening
 server.listen(3000, function(){

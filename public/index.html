@@ -1,51 +1,40 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <title>Socket.io Demo</title>
-      <meta charset="utf-8">
-		<link rel="stylesheet" href="styles.css">
-   </head>
-   <body>
-		 <h1>Socket.io Client->Server->Client Demo</h1>
-		 <p id="clientId"></p>
-		 <p id="buttonCount">This client's button has been clicked 0 times.</p>
-		 <div id="clients"></div>
+<head>
+    <title>N00143888 - Aaron O'Hare</title>
+    <meta charset="utf-8">
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect();
+        //display the client ID on the webpage
+        socket.on('connect', function () {
+            document.getElementById("clientId").innerHTML = "This client's ID is " + socket.id;
+        });
 
-		 <script src="/socket.io/socket.io.js"></script>
-		 <script>
-			 var socket = io.connect();
-			 
-			 //display the client ID on the webpage
-			 socket.on('connect', function(){
-			  	document.getElementById("clientId").innerHTML = "This client's ID is " + socket.id;
-			 });
-			 
-			 //store how many times this client's button has been clicked
-			 var clicked = 0;
-			 
-			 //when the server tells the client their button was clicked by any of the clients
-			 socket.on('youWereClicked', function(){
-				 clicked++;
-				 document.getElementById("buttonCount").innerHTML = "This client's button has been clicked " + clicked + ' times.';
-			 });
-			 
-			 //Add button for each client that is connected to the server
-			 socket.on('clientList', function(data){
-				 document.getElementById("clients").innerHTML = "";
-				 for(var i = 0; i < data.length; i++){
-					 var btn = document.createElement("BUTTON"); 
-					 btn.onclick = clientButtonClicked;
-					 var textnode = document.createTextNode(data[i]);
-					 btn.appendChild(textnode);
-					 document.getElementById("clients").appendChild(btn);
-				 }
-			 });
-			 
-		
-			 function clientButtonClicked(){
-				 //Tell  server  button was clicked, send the client id the message
-				 socket.emit('clientClicked', this.innerHTML);
-			 }
-		</script>
-   </body>
+        function chat() {
+            document.getElementById("chatForm").onsubmit = function getMessage() {
+                socket.emit('chat message', document.getElementById('chatbox').value);
+                event.preventDefault();
+            };
+            socket.on('chat message', function (msg) {
+                var listItem = document.createElement("li");
+                var listItemText = document.createTextNode(msg);
+                listItem.appendChild(listItemText);
+                document.getElementById('messages').appendChild(listItem);
+                document.getElementById('chatbox').value = ("");
+            });
+        };
+    </script>
+</head>
+
+<body onload="chat()">
+    <p id="clientId"></p>
+    <div id="chat">
+        <ul id="messages"></ul>
+        <form id="chatForm">
+            <input id="chatbox"/>
+            <button>Send</button>
+        </form>
+    </div>
+</body>
 </html>
