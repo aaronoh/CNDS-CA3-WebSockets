@@ -1,14 +1,16 @@
 # CA3 - Computer Networks & Distributed Systems
 ## N00143888 - Aaron O'Hare
 
-This project was constructed using HTML, CSS, JavaScript, Express and socket.io. It is basic online chatrom built for the purposes of a college assignment.
+This project was constructed using HTML, CSS, JavaScript, Express and socket.io. It is basic online single chatroom chat, hosted on a node server and built for the purposes of a college assignment.
 
 This application can be tested by first starting the server through node. 
 
-Ensure you have node isntalled, open a command window, navigate to the root of this porject folder and type:
+Ensure you have node isntalled, open a command window, navigate to the root of this project folder and type:
 
 ```
 node server.js
 ```
 
 Once the server has started open your web browser and navigate to http://localhost:3000/
+
+When you connect to the page you will be prompted to enter a username, from there you will be able to chat by typing in the input file don the bottom of the screen and pressing the enter key on your keyboard. 

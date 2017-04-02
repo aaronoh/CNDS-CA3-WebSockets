@@ -7,87 +7,125 @@
     <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script>
-        
-        function init(){
+        //function on page load, calls add name function & chat function, described below
+        function init() {
             addName();
             chat();
         }
+        //prompt user for username, stores it in a variable
         var myUser = prompt("Please enter a username");
         var socket = io.connect();
-        //display the client ID on the webpage
+        //when the user is cinnected 
         socket.on('connect', function () {
             document.getElementById("clientId").innerHTML = "This client's ID is " + socket.id;
         });
-        socket.on('clientList', function(data){
+        //when 'clientlist' is receieved from the server
+        socket.on('clientList', function (data) {
+            //log the array reciueevd 
             console.log(data);
+            //variable representing current users (minus you)
             var otherUsers = data.length - 1;
+            //writing a welcome message to the HTML page
             document.getElementById("noUsers").innerHTML = "Welcome " + myUser + ". There are " + otherUsers + " other users connected.";
         });
-        //Currently not fully implemented - recieevs random colour hex from server
-        socket.on('colour', function(data){
-            console.log("Colour:" + data);
-        })
-      
-        function addName(){
+        //when 'newColour' is recieved
+        socket.on('newColour', function (data) {
+                console.log("Colour:" + data);
+                //set the background colour to the value sent from the server
+                document.body.style.backgroundColor = data;
+            })
+            //takes varaible set by prompt, emits to server
+        function addName() {
             console.log(myUser);
             socket.emit('new name', myUser)
-
         }
-        socket.on('usernames', function(data){
-            console.log("TESTING:" + data);
-            for(i = 0; i<data.length; i++){
-                var usersString = "All Users";
-                usersString += data[i];
-                console.log(i);
-            }
-            document.getElementById("allUsers").innerHTML ="All Users: " + data;
-        })
+        //called by html button, emits message to server that requests a new colour
+        function setRandColour() {
+            socket.emit('switchColour')
+        }
+        //when 'usernames' is recieved from the server
+        socket.on('usernames', function (data) {
+                console.log("TESTING:" + data);
+                var usersString = "All Users:" + '</br>';
+                //for each element in the data array - received from server
+                for (i = 0; i < data.length; i++) {
+                    //add the current data item to the existing contents of the variable
+                    usersString += data[i] + '</br>';
+                    console.log(i);
+                }
+                //write the variable to the html doc
+                document.getElementById("allUsers").innerHTML = usersString;
+            })
+            //function that deals with notification permisisons, time and sendin/recieving messages to/from server
         function chat() {
+            //If permissions arent already granted, requesy
             if (Notification.permission !== "granted") Notification.requestPermission();
+            //when the 'form (message box) is submitted, execute getMessage and preventDefault (Stops page from reloading)
             document.getElementById("chatForm").onsubmit = function getMessage() {
+                //Creating and parsing time object
                 var time = new Date();
                 var curTime = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds() + ": "
-                socket.emit('chat message', myUser + ": " + document.getElementById('chatbox').value+ " - " + curTime);
+                    //emit uaer, message and timestamp to server
+                socket.emit('chat message', myUser + ": " + document.getElementById('chatbox').value + " - " + curTime);
+                //stop page from reloading onSubmit
                 event.preventDefault();
             };
+            //when 'chat message' is recieved form the server
             socket.on('chat message', function (message) {
+                //create a list item
                 var listItem = document.createElement("li");
+                //create a textNode
                 var listItemText = document.createTextNode(message);
+                //append textNode to list item 
                 listItem.appendChild(listItemText);
+                //append list item to messages div through get by ID
                 document.getElementById('messages').appendChild(listItem);
+                //set value of the chat box to empoty string through get by id - remove text from box as message sent
                 document.getElementById('chatbox').value = ("");
-                notify()
+                //execute notify function
+                notify(message)
             });
         };
-
-        function notify() {
-
+        //function that handles desktop notifications - https://developer.mozilla.org/en/docs/Web/API/notificationhttps://developer.mozilla.org/en/docs/Web/API/notification
+        function notify(message) {
+            //if notifications dont exist, warn user
             if (!Notification) {
                 alert('Desktop notifications are not supported - please use Chrome or FireFox.');
             }
-            if (Notification.permission !== "granted") Notification.requestPermission();
+            //if the current tab does not have focus
             if (!document.hasFocus()) {
+                //create a new notification, set the title, icon and body - using the message passed in by the calling function
                 var notification = new Notification('WebChat', {
                     icon: 'http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png'
-                    , body: "You have a new message"
+                    , body: "You have a new message from " + message
                 , });
-           
-            notification.onclick = function (event) {
-                window.focus();
+                //when the notification is clicked, give the tab/window focus
+                notification.onclick = function (event) {
+                    window.focus();
+                }
             }
-             }
         }
     </script>
 </head>
+<!--Execute the init() function once the body has loaded-->
 
 <body onload="init()">
+    <!--Paragraoh Contiang the Users ID-->
     <p id="clientId"></p>
+    <!--Paragraph containg the welcome message/user count -->
     <p id="noUsers"></p>
+    <!--Paragraph containing the names of all users-->
     <p id="allUsers"></p>
+    <!--Button that calls setRandColour - Changing background colour-->
+    <button onclick="setRandColour()">Change Background</button>
+    <!--Div containing all of the chat elements-->
     <div id="chat">
+        <!--Unordered list containing each message (list item)-->
         <ul id="messages"></ul>
+        <!--Form used to send messages-->
         <form id="chatForm" autocomplete='off'>
-            <input id="chatbox" placeholder="Type Message Here, Press Enter To Send" /> </form>
+            <!--Text input for messsages-->
+            <input type="text" id="chatbox" placeholder="Type Message Here, Press Enter To Send" /> </form>
     </div>
 </body>
 

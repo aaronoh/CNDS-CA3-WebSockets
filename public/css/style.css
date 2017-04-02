@@ -10,18 +10,16 @@
     height: 30px;
     padding: 0px;
     font-size: 1.2em;
+    margin-left: 25%;
 }
 
 #messages {
     font-size: 20px;
     list-style-type: none;
     width: 50%;
-    margin-left: 20%;
-    padding: 0;
-}
-
-#chatbox {
     margin-left: 25%;
+    margin-top: -100px;
+    padding: 0;
 }
 
 #messages li {
