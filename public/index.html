@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>N00143888 - Aaron O'Hare</title>
     <meta charset="utf-8">
@@ -7,35 +8,65 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script>
         var socket = io.connect();
+        var timestamp = Math.floor(Date.now() / 1000);
+        console.log(timestamp);
         //display the client ID on the webpage
         socket.on('connect', function () {
             document.getElementById("clientId").innerHTML = "This client's ID is " + socket.id;
         });
-
+        socket.on('clientList', function(data){
+            console.log(data);
+            document.getElementById("noUsers").innerHTML = "There are " + data.length + " users connected.";
+        });
         function chat() {
+            if (Notification.permission !== "granted") Notification.requestPermission();
             document.getElementById("chatForm").onsubmit = function getMessage() {
-                socket.emit('chat message', document.getElementById('chatbox').value);
+                var time = new Date();
+                var curTime = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds() + ": "
+                socket.emit('chat message', curTime + " " + document.getElementById('chatbox').value);
                 event.preventDefault();
             };
-            socket.on('chat message', function (msg) {
+            socket.on('chat message', function (message) {
                 var listItem = document.createElement("li");
-                var listItemText = document.createTextNode(msg);
+                var listItemText = document.createTextNode(message);
                 listItem.appendChild(listItemText);
                 document.getElementById('messages').appendChild(listItem);
                 document.getElementById('chatbox').value = ("");
+                notify()
             });
         };
+        // request permission on page load
+        document.addEventListener('DOMContentLoaded', function () {});
+
+        function notify() {
+
+            if (!Notification) {
+                alert('Desktop notifications are not supported - please use Chrome or FireFox.');
+            }
+            if (Notification.permission !== "granted") Notification.requestPermission();
+            if (!document.hasFocus()) {
+                var notification = new Notification('WebChat', {
+                    icon: 'http://www.myiconfinder.com/uploads/iconsets/256-256-f269bbc2a3bd8805b0dccb6c36dd2fac.png'
+                    , body: "You have a new message"
+                , });
+           
+            notification.onclick = function (event) {
+                window.focus();
+            }
+             }
+        }
     </script>
 </head>
 
 <body onload="chat()">
     <p id="clientId"></p>
+    <p id="noUsers"></p>
     <div id="chat">
         <ul id="messages"></ul>
-        <form id="chatForm">
-            <input id="chatbox"/>
-            <button>Send</button>
-        </form>
+        <form id="chatForm" autocomplete='off'>
+            <label for="chatbox">socket.id</label>
+            <input id="chatbox" placeholder="Type Message Here, Press Enter To Send" /> </form>
     </div>
 </body>
+
 </html>

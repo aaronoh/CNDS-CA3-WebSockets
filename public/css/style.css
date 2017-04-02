@@ -1,3 +1,35 @@
-body{
-    color: red;
+#chatForm {
+    width: 100%;
+    position: fixed;
+    bottom: 10px;
+    padding: 0px;
+}
+
+#chatbox {
+    width: 50%;
+    height: 30px;
+    padding: 0px;
+    font-size: 1.2em;
+}
+
+#messages {
+    font-size: 20px;
+    list-style-type: none;
+    width: 50%;
+    margin-left: 20%;
+    padding: 0;
+}
+
+label {
+    margin-left: 16%;
+}
+
+#messages li {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#messages li:nth-child(odd) {
+    background: #a5d;
+    color: white;
 }
