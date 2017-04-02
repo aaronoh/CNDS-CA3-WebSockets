@@ -3,6 +3,8 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+var users = [];
+
 app.use(express.static(__dirname + '/public'));
 //redirect / to our index.html file
 app.get('/', function (req, res, next) {
@@ -11,6 +13,13 @@ app.get('/', function (req, res, next) {
 io.on('connection', function (client) {
     console.log('client connected');
     //when a new client connects
+    
+    client.on('new name', function(user){
+        client.nickname = user;
+        users.push[client.user];
+        io.emit('usernames', users);
+        console.log(users);
+    })
     io.clients(function (error, clients) {
         if (error) throw error;
         //send the list of clients out to all the clients

@@ -7,6 +7,12 @@
     <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script>
+        
+        function init(){
+            addName();
+            chat();
+        }
+        var myUser = prompt("Please enter a username");
         var socket = io.connect();
         var timestamp = Math.floor(Date.now() / 1000);
         console.log(timestamp);
@@ -18,6 +24,14 @@
             console.log(data);
             document.getElementById("noUsers").innerHTML = "There are " + data.length + " users connected.";
         });
+        function addName(){
+            console.log(myUser);
+            socket.emit('new name', myUser)
+
+        }
+        socket.on('usernames', function(data){
+            console.log("TESTING:" + data)
+        })
         function chat() {
             if (Notification.permission !== "granted") Notification.requestPermission();
             document.getElementById("chatForm").onsubmit = function getMessage() {
@@ -35,8 +49,6 @@
                 notify()
             });
         };
-        // request permission on page load
-        document.addEventListener('DOMContentLoaded', function () {});
 
         function notify() {
 
@@ -58,7 +70,7 @@
     </script>
 </head>
 
-<body onload="chat()">
+<body onload="init()">
     <p id="clientId"></p>
     <p id="noUsers"></p>
     <div id="chat">

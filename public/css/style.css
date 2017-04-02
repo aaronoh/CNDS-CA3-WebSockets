@@ -30,6 +30,11 @@ label {
 }
 
 #messages li:nth-child(odd) {
-    background: #a5d;
-    color: white;
+    background: #ecf0f1;
+
+}
+
+#messages li:nth-child(even) {
+    background: #16a085;
+        color: white;
 }
