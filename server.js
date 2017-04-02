@@ -4,6 +4,8 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var users = [];
+var colours = ["#1abc9c","#3498db","#e74c3c","#f1c40f", "#e67e22","#1abc9c","#3498db","#e74c3c","#f1c40f", "#e67e22", "#1abc9c","#3498db","#e74c3c","#f1c40f", "#e67e22", "#1abc9c","#3498db","#e74c3c","#f1c40f", "#e67e22", "#1abc9c","#3498db","#e74c3c","#f1c40f", "#e67e22"];
+
 
 app.use(express.static(__dirname + '/public'));
 //redirect / to our index.html file
@@ -16,13 +18,16 @@ io.on('connection', function (client) {
     
     client.on('new name', function(user){
         client.nickname = user;
-        users.push[client.user];
+        users.push(client.nickname);
         io.emit('usernames', users);
-        console.log(users);
+        console.log("Users: " + users);
     })
     io.clients(function (error, clients) {
         if (error) throw error;
+        var colourIndex = Math.floor(Math.random() * (25));
+        var colour = colours[colourIndex]
         //send the list of clients out to all the clients
+        io.emit('colour',(colour));
         io.emit('clientList', clients);
     });
     client.on('chat message', function (message) {

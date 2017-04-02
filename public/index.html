@@ -14,30 +14,40 @@
         }
         var myUser = prompt("Please enter a username");
         var socket = io.connect();
-        var timestamp = Math.floor(Date.now() / 1000);
-        console.log(timestamp);
         //display the client ID on the webpage
         socket.on('connect', function () {
             document.getElementById("clientId").innerHTML = "This client's ID is " + socket.id;
         });
         socket.on('clientList', function(data){
             console.log(data);
-            document.getElementById("noUsers").innerHTML = "There are " + data.length + " users connected.";
+            var otherUsers = data.length - 1;
+            document.getElementById("noUsers").innerHTML = "Welcome " + myUser + ". There are " + otherUsers + " other users connected.";
         });
+        //Currently not fully implemented - recieevs random colour hex from server
+        socket.on('colour', function(data){
+            console.log("Colour:" + data);
+        })
+      
         function addName(){
             console.log(myUser);
             socket.emit('new name', myUser)
 
         }
         socket.on('usernames', function(data){
-            console.log("TESTING:" + data)
+            console.log("TESTING:" + data);
+            for(i = 0; i<data.length; i++){
+                var usersString = "All Users";
+                usersString += data[i];
+                console.log(i);
+            }
+            document.getElementById("allUsers").innerHTML ="All Users: " + data;
         })
         function chat() {
             if (Notification.permission !== "granted") Notification.requestPermission();
             document.getElementById("chatForm").onsubmit = function getMessage() {
                 var time = new Date();
                 var curTime = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds() + ": "
-                socket.emit('chat message', curTime + " " + document.getElementById('chatbox').value);
+                socket.emit('chat message', myUser + ": " + document.getElementById('chatbox').value+ " - " + curTime);
                 event.preventDefault();
             };
             socket.on('chat message', function (message) {
@@ -73,10 +83,10 @@
 <body onload="init()">
     <p id="clientId"></p>
     <p id="noUsers"></p>
+    <p id="allUsers"></p>
     <div id="chat">
         <ul id="messages"></ul>
         <form id="chatForm" autocomplete='off'>
-            <label for="chatbox">socket.id</label>
             <input id="chatbox" placeholder="Type Message Here, Press Enter To Send" /> </form>
     </div>
 </body>

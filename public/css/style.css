@@ -20,13 +20,14 @@
     padding: 0;
 }
 
-label {
-    margin-left: 16%;
+#chatbox {
+    margin-left: 25%;
 }
 
 #messages li {
     padding-top: 5px;
     padding-bottom: 5px;
+    padding-left: 5px;
 }
 
 #messages li:nth-child(odd) {
