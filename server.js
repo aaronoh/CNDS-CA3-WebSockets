@@ -30,17 +30,18 @@ io.on('connection', function (client) {
         //send the list of clients out to all the clients
         io.emit('clientList', clients);
     });
+    //when 'switchColour' is receieved from the client
     client.on('switchColour', function () {
-            //generate random number between 0 and 24
+            //generate random number between 0 and 4
             var colourIndex = Math.floor(Math.random() * (5));
             //use the number generated to choose a colour from thew colours array based on index
             var colour = colours[colourIndex]
             io.emit('newColour', colour)
         })
         //when 'message' is receieved from the client
-    client.on('chat message', function (message) {
+    client.on('message', function (message) {
         //send that message to all clients 
-        io.emit('chat message', message)
+        io.emit('message', message)
     })
 });
 //start our web server and socket.io server listening

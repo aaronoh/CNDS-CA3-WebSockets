@@ -66,12 +66,12 @@
                 var time = new Date();
                 var curTime = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds() + ": "
                     //emit uaer, message and timestamp to server
-                socket.emit('chat message', myUser + ": " + document.getElementById('chatbox').value + " - " + curTime);
+                socket.emit('message', myUser + ": " + document.getElementById('chatbox').value + " - " + curTime);
                 //stop page from reloading onSubmit
                 event.preventDefault();
             };
-            //when 'chat message' is recieved form the server
-            socket.on('chat message', function (message) {
+            //when 'message' is recieved form the server
+            socket.on('message', function (message) {
                 //create a list item
                 var listItem = document.createElement("li");
                 //create a textNode
