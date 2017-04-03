@@ -13,4 +13,4 @@ node server.js
 
 Once the server has started open your web browser and navigate to http://localhost:3000/
 
-When you connect to the page you will be prompted to enter a username, from there you will be able to chat by typing in the input file don the bottom of the screen and pressing the enter key on your keyboard. 
+When you connect to the page you will be prompted to enter a username, from there you will be able to chat by typing in the box on the bottom of the page and pressing the enter key on your keyboard. You can also change the backgroud colour of the chat for all connected clients by clicking the 'Change Background' button at the top of the page.  
